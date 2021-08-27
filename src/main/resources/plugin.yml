@@ -1,0 +1,4 @@
+name: KeepCrops
+version: ${project.version}
+main: me.braekpo1nt.keepcrops.Main
+api-version: 1.16
