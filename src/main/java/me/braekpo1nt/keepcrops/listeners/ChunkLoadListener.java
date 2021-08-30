@@ -1,6 +1,8 @@
 package me.braekpo1nt.keepcrops.listeners;
 
 import me.braekpo1nt.keepcrops.Main;
+import me.braekpo1nt.keepcrops.data.CropChunk;
+import me.braekpo1nt.keepcrops.database.KeepCropsDB;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
@@ -19,10 +21,11 @@ public class ChunkLoadListener implements Listener {
     }
     
     private void startClock() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             @Override
             public void run() {
-                for (Chunk chunk : chunks) {
+                for (CropChunk cropChunk : KeepCropsDB.getCropChunks()) {
+                    Chunk chunk = cropChunk.getChunk();
                     for (Player player : plugin.getServer().getOnlinePlayers()) {
                         // if there is a player within 128 blocks of the center of this chunk
                         if (dist(chunk.getX() * 16, chunk.getZ() * 16, player.getLocation().getBlockX(), player.getLocation().getBlockZ()) < 128) {
@@ -43,7 +46,8 @@ public class ChunkLoadListener implements Listener {
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
         Chunk chunk = event.getChunk();
-        if (Main.containsChunk(chunk)) {
+        CropChunk existingChunk = KeepCropsDB.getCropChunk(chunk);
+        if (existingChunk != null) {
             Bukkit.getLogger().info("Kept Chunk " + chunk + " unloaded");
         }
     }
@@ -51,8 +55,9 @@ public class ChunkLoadListener implements Listener {
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
         Chunk chunk = event.getChunk();
-        if (Main.containsChunk(chunk)) {
-            Bukkit.getLogger().info("Kept Chunk " + chunk + " unloaded");
+        CropChunk existingChunk = KeepCropsDB.getCropChunk(chunk);
+        if (existingChunk != null) {
+            Bukkit.getLogger().info("Kept Chunk " + chunk + " loaded");
         }
     }
     

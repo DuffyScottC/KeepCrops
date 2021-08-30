@@ -17,4 +17,8 @@ public class CropChunk {
         this.chunk = chunk;
     }
     
+    public Chunk getChunk() {
+        return this.chunk;
+    }
+    
 }
